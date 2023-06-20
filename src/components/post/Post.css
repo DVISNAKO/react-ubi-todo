@@ -1,0 +1,34 @@
+.post {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 800px;
+}
+
+.title {
+    width: 100px;
+}
+.post__content{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+    border: 2px solid teal;
+    padding: 10px;
+    width: 700px;
+}
+
+.disc {
+    display: flex;
+    align-items:center;
+    margin-left: 80px;
+    margin-right: 50px;
+    width: 30vh;
+}
+
+.btn{ 
+    height: 35px;
+    background: transparent;
+    margin-top: 10px;
+    border-color: aqua;
+    cursor: pointer;
+}

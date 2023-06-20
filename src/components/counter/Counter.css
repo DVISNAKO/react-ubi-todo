@@ -1,0 +1,21 @@
+.counter{
+    display: flex;
+    justify-content: center;
+}
+button{
+    padding: 10px;
+    background: pink;
+    border: none;
+}
+
+span {
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    margin: 10px;
+    font-size: 20px;
+    color:aqua;
+    background: grey;
+    height: 50px;
+    width: 50px;
+}
