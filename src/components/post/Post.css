@@ -2,15 +2,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 800px;
+    width: 100%;
 }
 
 .title {
-    width: 100px;
+    width: 270px;
 }
 .post__content{
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin: 10px;
     border: 2px solid teal;
     padding: 10px;
