@@ -2,6 +2,12 @@ import React from 'react';
 import Post from './Post'
 
 const PostList = ({posts, title, remove}) => {
+    
+    if(!posts.length){
+        return (
+        <h1>Посты не найдены!</h1>
+        )  
+    }
     return (
         <div>
             <h2 style={{textAlign: 'center'}}>{title}</h2>

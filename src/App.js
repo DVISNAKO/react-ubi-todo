@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import './App.css';
 import PostList from './components/post/PostList';
-import MyInput from './components/UAI/input/MyInput';
 import PostForm from './components/form/PostForm';
-import MySelect from './components/UAI/select/MySelect';
+import PostFilter from './components/postFilter/PostFilter';
+import MyModal from './components/myModal/MyModal';
 
 
 function App() {
@@ -14,59 +14,48 @@ function App() {
     { id: 3, title: 'React', body: 'descrip3' }
   ])
 
-  const [selectedSort, setSelectedSort] = useState('');
-  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState({ sort: '', query: '' })
+  const [modal, setModal] = useState(false);
 
   const sortedPost = useMemo(() => {
     console.log("отработала")
-    if (selectedSort) {
-      return [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]));
+    if (filter.sort) {
+      return [...posts].sort((a, b) => a[filter.sort].localeCompare(b[filter.sort]));
     } return posts;
-  }, [selectedSort, posts])
+  }, [filter.sort, posts])
 
-  const sortedAndSeachedPosts = useMemo( () => {
-    return sortedPost.filter(post => post.title.toLowerCase().includes(search))
-  }, [search, sortedPost])
+  const sortedAndSeachedPosts = useMemo(() => {
+    return sortedPost.filter(post => post.title.toLowerCase().includes(filter.query))
+  }, [filter.query, sortedPost])
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost])
+    setModal(false);
   }
 
   const removePost = (remPost) => {
     setPosts(posts.filter(p => p.id !== remPost.id))
   }
 
-  const sortPost = (sort) => {
-    setSelectedSort(sort);
-  }
 
   return (
 
     <div className="App">
-      <PostForm create={createPost}
+      <button onClick={() => setModal(true)}>Создать задачу</button>
+      <hr style={{ width: 300 }} />
+      <MyModal visible={modal} setVisible={setModal}>
+        <PostForm create={createPost}/>
+      </MyModal>
+
+      <PostFilter
+        filter={filter}
+        setFilter={setFilter}
       />
-      <hr style={{ width: 300 }} />
-
-      <MyInput
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        placeholder="Поиск.." />
-
-      <MySelect
-        value={selectedSort}
-        onChange={sortPost}
-        defaultvalue="Сортировка по"
-        options={[
-          { value: 'title', name: 'По названию' },
-          { value: 'body', name: 'По описанию' },
-        ]}
-      ></MySelect>
 
       <hr style={{ width: 300 }} />
-      {sortedAndSeachedPosts.length !== 0
-        ? <PostList remove={removePost} posts={sortedAndSeachedPosts} title={'Список постов'} />
-        : <h2>Посты не были найдены</h2>
-      }
+
+      <PostList remove={removePost} posts={sortedAndSeachedPosts} title={'Список постов'} />
+
 
     </div>
   );
