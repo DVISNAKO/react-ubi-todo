@@ -6,6 +6,8 @@ import PostFilter from './components/postFilter/PostFilter';
 import MyModal from './components/myModal/MyModal';
 import { usePosts } from './components/hooks/usePosts';
 import PostService from './API/PostService';
+import { getPageCount, getPagesArray } from './utils/pages';
+import { useFetching } from './components/hooks/useFetching';
 
 
 function App() {
@@ -14,8 +16,18 @@ function App() {
   const [filter, setFilter] = useState({ sort: '', query: '' })
   const [modal, setModal] = useState(false);
   const sortedAndSeachedPosts = usePosts(posts, filter.sort, filter.query);
-  const [loading, setLoading] = useState(false);
+  const [totalPage, setTotaltotalPage] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  let pagesArray = getPagesArray(totalPage)
 
+
+  const [fetchPosts, isLoading, postError] = useFetching(async () => {
+    const response = await PostService.getAll(limit, page);
+    setPosts(response.data)
+    const totalCount = response.headers['x-total-count']
+    setTotaltotalPage(getPageCount(totalCount, limit));
+  })
 
   useEffect(() => {
     fetchPosts();
@@ -26,14 +38,7 @@ function App() {
     setModal(false);
   }
 
-async function fetchPosts(){
-  setLoading(true);
-  const posts = await PostService.getAll();
-  setPosts(posts)
-  setLoading(false);
-}
-
-const removePost = (remPost) => {
+  const removePost = (remPost) => {
     setPosts(posts.filter(p => p.id !== remPost.id))
   }
 
@@ -44,7 +49,7 @@ const removePost = (remPost) => {
       <button onClick={() => setModal(true)}>Создать задачу</button>
       <hr style={{ width: 300 }} />
       <MyModal visible={modal} setVisible={setModal}>
-        <PostForm create={createPost}/>
+        <PostForm create={createPost} />
       </MyModal>
 
       <PostFilter
@@ -53,10 +58,16 @@ const removePost = (remPost) => {
       />
 
       <hr style={{ width: 300 }} />
-    {loading
-      ? <h1>Loading...</h1>
-      : <PostList remove={removePost} posts={sortedAndSeachedPosts} title={'Список постов'} /> 
-    }
+      {postError &&
+        <h1>Произошла ошибка</h1>}
+      {isLoading
+        ? <h1>Loading...</h1>
+        : <PostList remove={removePost} posts={sortedAndSeachedPosts} title={'Список постов'} />
+      }
+      <div>{pagesArray.map(p =>
+        <button>{p}</button>)}
+      </div>
+
     </div>
   );
 }
